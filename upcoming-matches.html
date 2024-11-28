@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upcoming Matches</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center mb-4">Upcoming Matches</h1>
+    <div id="upcomingMatches"></div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    // Fetch upcoming matches from the server and display them
+    socket.on('matches', function(matches) {
+      displayMatches(matches);
+    });
+
+    // Listen for new matches being added
+    socket.on('newMatch', function(match) {
+      const upcomingMatches = document.getElementById('upcomingMatches');
+      const newMatch = document.createElement('div');
+      newMatch.className = 'match-card';
+      newMatch.innerHTML = `
+        <h5>${match.fixture}</h5>
+        <p>Date: ${new Date(match.matchDate).toLocaleString()}</p>
+        <button class="btn btn-success" onclick="startMatch('${match._id}')">Start</button>
+      `;
+      upcomingMatches.appendChild(newMatch);
+    });
+
+    // Listen for a match starting
+    socket.on('matchStarted', function(match) {
+      const upcomingMatches = document.getElementById('upcomingMatches');
+      const matchCards = upcomingMatches.getElementsByClassName('match-card');
+      for (const card of matchCards) {
+        if (card.querySelector('button')) {
+          const matchId = card.querySelector('button').getAttribute('onclick').match(/'([^']+)'/)[1];
+          if (matchId === match._id) {
+            card.querySelector('button').innerText = 'Live';
+            card.querySelector('button').disabled = true;
+            break;
+          }
+        }
+      }
+    });
+
+    // Function to start a match
+    function startMatch(matchId) {
+      socket.emit('startMatch', matchId);
+    }
+  </script>
+</body>
+</html>

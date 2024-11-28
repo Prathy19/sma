@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Fixture</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f4f7fa;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      max-width: 800px;
+      margin-top: 20px;
+    }
+    .form-control {
+      margin-bottom: 15px;
+    }
+    .btn {
+      margin-top: 10px;
+    }
+  
+    .match-box {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  margin: 10px;
+  font-size: 1.25rem; /* Increase font size for the match details */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.match-title {
+  font-weight: bold;
+  font-size: 1.5rem; /* Make the team names larger */
+  margin-bottom: 5px;
+}
+
+.match-department {
+  font-size: 1.25rem; /* Increase size of department details */
+  color: #555;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Create Tournament Fixture</h1>
+    <form id="fixtureForm">
+      <div class="mb-3">
+        <label for="sport" class="form-label">Sport</label>
+        <input type="text" class="form-control" id="sport" value="Badminton" disabled>
+      </div>
+      <div class="mb-3">
+        <label for="fixtureType" class="form-label">Fixture Type</label>
+        <select class="form-select" id="fixtureType">
+          <option value="intra">Intra-department</option>
+          <option value="inter">Inter-department</option>
+        </select>
+      </div>
+      <div class="mb-3" id="departmentSelect" style="display:none;">
+        <label for="department" class="form-label">Select Department</label>
+        <select class="form-select" id="department">
+          <option value="CSE">CSE</option>
+          <option value="ECE">ECE</option>
+          <option value="EEE">EEE</option>
+          <option value="MECH">MECH</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="type" class="form-label">Type</label>
+        <select class="form-select" id="type">
+          <option value="singles">Singles</option>
+          <option value="doubles">Doubles</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="gender" class="form-label">Gender</label>
+        <select class="form-select" id="gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <select class="form-select" id="category">
+          <option value="inter">Inter-department</option>
+          <option value="intra">Intra-department</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="matchDate" class="form-label">Match Date</label>
+        <input type="datetime-local" class="form-control" id="matchDate">
+      </div>
+      <div class="mb-3">
+        <label for="numTeams" class="form-label">Number of Teams</label>
+        <input type="number" class="form-control" id="numTeams" required>
+      </div>
+      <div class="mb-3">
+        <label for="teamNames" class="form-label">Enter Team Names (Comma Separated)</label>
+        <input type="text" class="form-control" id="teamNames" placeholder="e.g. Team A, Team B, Team C" required>
+      </div>
+      <button type="button" class="btn btn-primary" onclick="generateFixture()">Generate Fixture</button>
+    </form>
+    <div id="generatedFixture" style="display:none;">
+      <h2>Generated Fixture</h2>
+      <div id="fixtureDisplay"></div>
+      <button class="btn btn-success" onclick="saveAndViewFixture()">Save and View Fixtures</button>
+    </div>
+  </div>
+
+  <script>
+    // Toggle department selection based on fixture type
+    document.getElementById('fixtureType').addEventListener('change', function() {
+      if (this.value === 'intra') {
+        document.getElementById('departmentSelect').style.display = 'block';
+      } else {
+        document.getElementById('departmentSelect').style.display = 'none';
+      }
+    });
+
+    function generateFixture() {
+  const sport = document.getElementById('sport').value;
+  const fixtureType = document.getElementById('fixtureType').value;
+  const type = document.getElementById('type').value;
+  const gender = document.getElementById('gender').value;
+  const category = document.getElementById('category').value;
+  const matchDate = document.getElementById('matchDate').value;
+  const numTeams = document.getElementById('numTeams').value;
+  const teamNames = document.getElementById('teamNames').value.split(',').map(item => item.trim());
+
+  // Ensure correct number of teams
+  if (teamNames.length !== parseInt(numTeams)) {
+    alert('Number of teams does not match the input!');
+    return;
+  }
+
+  // Collect department information
+  const departmentNames = [];
+  if (category === 'inter') {
+    // Ask for a department name for each team
+    teamNames.forEach((team, index) => {
+      const department = prompt(`Enter department name for ${team}:`);
+      departmentNames.push(department);
+    });
+  } else {
+    // Ask for a single department name for all teams
+    const department = prompt('Enter department name for all teams:');
+    teamNames.forEach(() => {
+      departmentNames.push(department);
+    });
+  }
+
+  // Randomly shuffle teams
+  teamNames.sort(() => Math.random() - 0.5);
+
+  // Pair teams randomly
+  const teamPairs = [];
+  for (let i = 0; i < teamNames.length; i += 2) {
+    if (teamNames[i + 1]) {
+      teamPairs.push({
+        team1: teamNames[i],
+        team2: teamNames[i + 1],
+        department1: departmentNames[i],
+        department2: departmentNames[i + 1],
+      });
+    }
+  }
+      // Generate the fixture data
+      const fixtureData = teamPairs.map(pair => {
+        const department1 = fixtureType === 'intra' ? document.getElementById('department').value : 'Inter-department';
+        const department2 = fixtureType === 'intra' ? document.getElementById('department').value : 'Inter-department';
+        return { team1: pair[0], team2: pair[1], department1, department2 };
+      });
+
+      // Generate and display the fixture
+  let fixtureHtml = `<h5 style="font-size: 1.5rem; margin-bottom: 20px;">Sport: ${sport} | Type: ${type} | Gender: ${gender} | Category: ${category} | Match Date: ${matchDate}</h5>`;
+  fixtureHtml += '<div class="row">';
+  teamPairs.forEach((match, index) => {
+    fixtureHtml += `
+      <div class="col-md-3 match-box">
+        <div class="match-title">${match.team1} vs ${match.team2}</div>
+        <div class="match-department">(${match.department1} vs ${match.department2})</div>
+      </div>`;
+  });
+  fixtureHtml += '</div>';
+
+  document.getElementById('fixtureDisplay').innerHTML = fixtureHtml;
+  document.getElementById('generatedFixture').style.display = 'block';
+
+      document.getElementById('fixtureDisplay').innerHTML = fixtureHtml;
+      document.getElementById('generatedFixture').style.display = 'block';
+    }
+
+    function saveAndViewFixture() {
+  const sport = document.getElementById('sport').value;
+  const type = document.getElementById('type').value;
+  const gender = document.getElementById('gender').value;
+  const category = document.getElementById('category').value;
+  const matchDate = document.getElementById('matchDate').value;
+  const teamNames = document.getElementById('teamNames').value.split(',').map(item => item.trim());
+
+  // Shuffle and pair teams
+  teamNames.sort(() => Math.random() - 0.5);
+  const pairedTeams = [];
+  for (let i = 0; i < teamNames.length; i += 2) {
+    if (teamNames[i + 1]) {
+      pairedTeams.push({ team1: teamNames[i], team2: teamNames[i + 1] });
+    }
+  }
+
+  const fixtureData = {
+    sport,
+    type,
+    gender,
+    category,
+    matchDate,
+    matches: pairedTeams // Save paired matches
+  };
+
+  let fixtures = JSON.parse(localStorage.getItem('fixtures')) || [];
+  fixtures.push(fixtureData);
+  localStorage.setItem('fixtures', JSON.stringify(fixtures));
+
+  window.location.href = 'view-fixture.html';
+}
+
+  </script>
+</body>
+</html>

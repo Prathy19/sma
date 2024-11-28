@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Badminton Management</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding-top: 70px; /* Adjust for fixed navbar */
+    }
+
+    #admin, #login {
+      padding-top: 40px; /* Add spacing between sections */
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">🏸 Badminton Club</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link active bg-dark text-white" href="#admin" >Admin Panel</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#login">Login</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section id="admin" class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-5 text-white">Admin Panel</h2>
+      <div class="row g-4">
+        <!-- Tab Cards -->
+        <div class="col-md-6">
+          <div class="card text-center shadow">
+            <div class="card-body">
+              <i class="fas fa-calendar-plus fa-3x text-primary mb-3"></i>
+              <h5 class="card-title">Upcoming Matches</h5>
+              <p class="card-text">View and schedule matches.</p>
+              <a href="upcoming-matches.html" class="btn btn-outline-primary">View Matches</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card text-center shadow">
+            <div class="card-body">
+              <i class="fas fa-trophy fa-3x text-warning mb-3"></i>
+              <h5 class="card-title">Create Fixtures</h5>
+              <p class="card-text">Generate and manage tournament fixtures.</p>
+              <a href="fixture.html" class="btn btn-outline-warning">Create Fixture</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card text-center shadow">
+            <div class="card-body">
+              <i class="fas fa-eye fa-3x text-info mb-3"></i>
+              <h5 class="card-title">View Fixture</h5>
+              <p class="card-text">View the generated fixture and tournament details.</p>
+              <a href="view-fixture.html" class="btn btn-outline-info">View Fixture</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card text-center shadow">
+            <div class="card-body">
+              <i class="fas fa-users fa-3x text-success mb-3"></i>
+              <h5 class="card-title">Live Matches</h5>
+              <p class="card-text">Track ongoing matches and update scores.</p>
+              <a href="live-matches.html" class="btn btn-outline-success">Go Live</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+ 
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-3 text-center">
+    <p class="my-5">&copy; 2024 College Badminton Club. All Rights Reserved.</p>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Firebase Configuration -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-database.js"></script>
+  <!-- Custom Script -->
+  <script src="script.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io(); // Connect to the WebSocket server
+  </script>
+</body>
+
+</html>

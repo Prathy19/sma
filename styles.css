@@ -1,0 +1,28 @@
+/* General Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    background: radial-gradient(circle at 24.1% 68.8%, rgb(50, 50, 50) 0%, rgb(0, 0, 0) 99.4%);
+  }
+  
+  
+  
+  .navbar {
+    padding: 1rem 2rem;
+  }
+  
+  .card {
+    transition: transform 0.3s;
+  
+  }
+  
+  .card:hover {
+    transform: scale(1.05);
+    background: linear-gradient(#ffffff,#000c40);
+  }
+  
+  footer {
+    font-size: 0.9rem;
+  }
+  
+  

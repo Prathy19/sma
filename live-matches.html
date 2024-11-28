@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Matches</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center mb-4">Live Matches</h1>
+    <div id="liveMatches"></div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    // Listen for live matches updates
+    socket.on('matches', function(matches) {
+      displayLiveMatches(matches.filter(match => match.status === 'Live'));
+    });
+
+    // Listen for score updates
+    socket.on('scoreUpdate', function(match) {
+      const liveMatches = document.getElementById('liveMatches');
+      const matchCards = liveMatches.getElementsByClassName('match-card');
+      for (const card of matchCards) {
+        if (card.querySelector('h5').innerText === match.fixture) {
+          card.querySelector('#team1Score').value = match.team1Score;
+          card.querySelector('#team2Score').value = match.team2Score;
+          break;
+        }
+      }
+    });
+
+    // Display live matches
+    function displayLiveMatches(matches) {
+      const liveMatches = document.getElementById('liveMatches');
+      liveMatches.innerHTML = ''; // Clear existing matches
+
+      matches.forEach(match => {
+        const matchCard = document.createElement('div');
+        matchCard.className = 'match-card';
+        matchCard.innerHTML = `
+          <h5>${match.fixture}</h5>
+          <div>
+            <label for="team1Score">Team 1 Score:</label>
+            <input type="number" id="team1Score" class="form-control" value="${match.team1Score}" onchange="updateScore('${match._id}')">
+          </div>
+          <div>
+            <label for="team2Score">Team 2 Score:</label>
+            <input type="number" id="team2Score" class="form-control" value="${match.team2Score}" onchange="updateScore('${match._id}')">
+          </div>
+        `;
+        liveMatches.appendChild(matchCard);
+      });
+    }
+
+    // Update the score when changed
+    function updateScore(matchId) {
+      const team1Score = document.getElementById('team1Score').value;
+      const team2Score = document.getElementById('team2Score').value;
+
+      socket.emit('updateScore', { matchId, team1Score, team2Score });
+    }
+  </script>
+</body>
+</html>

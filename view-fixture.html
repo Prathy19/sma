@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Fixture</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f8f9fa;
+    }
+    .container {
+      margin-top: 20px;
+    }
+    .fixture-box {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 15px;
+      position: relative;
+    }
+    .fixture-title {
+      font-weight: bold;
+    }
+    .btn-remove {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: white;
+      background-color: red;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .btn-remove-all {
+      color: white;
+      background-color: red;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      margin-bottom: 20px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center mb-4">View Fixture</h1>
+   
+    <div id="fixturesContainer"></div>
+  </div>
+
+  <script>
+    const fixturesContainer = document.getElementById('fixturesContainer');
+    let fixtures = JSON.parse(localStorage.getItem('fixtures')) || [];
+
+    // Render fixtures
+    function renderFixtures() {
+      fixturesContainer.innerHTML = '';
+      if (fixtures.length === 0) {
+        fixturesContainer.innerHTML = '<p class="text-center">No fixtures available.</p>';
+      } else {
+        fixtures.forEach((fixture, fixtureIndex) => {
+          const fixtureBox = document.createElement('div');
+          fixtureBox.classList.add('fixture-box');
+
+          let matchesHtml = '';
+          if (fixture.matches && fixture.matches.length > 0) {
+            fixture.matches.forEach((match, matchIndex) => {
+              matchesHtml += `
+                <div>Match ${matchIndex + 1}: ${match.team1} vs ${match.team2}</div>
+              `;
+            });
+          } else {
+            matchesHtml = '<div>No matches available</div>';
+          }
+
+          fixtureBox.innerHTML = `
+            <button class="btn-remove" onclick="removeFixture(${fixtureIndex})">Remove</button>
+            <div class="fixture-title">${fixture.sport} - ${fixture.type} (${fixture.gender})</div>
+            <div>Category: ${fixture.category}</div>
+            <div>Match Date: ${fixture.matchDate || 'Not specified'}</div>
+            <div class="mt-2"><strong>Matches:</strong></div>
+            ${matchesHtml}
+          `;
+
+          fixturesContainer.appendChild(fixtureBox);
+        });
+      }
+    }
+
+    // Remove a specific fixture
+    function removeFixture(index) {
+      if (confirm('Are you sure you want to remove this fixture?')) {
+        fixtures.splice(index, 1); // Remove the fixture from the array
+        localStorage.setItem('fixtures', JSON.stringify(fixtures)); // Update localStorage
+        renderFixtures(); // Re-render the page
+      }
+    }
+
+ 
+    // Initial render
+    renderFixtures();
+  </script>
+</body>
+</html>
